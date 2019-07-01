@@ -1,25 +1,23 @@
-#include <bits/stdc++.h>
-using namespace std;
+const int inf = 0x3f3f3f3f, N = 3e5;
 
-
-typedef int T;
-
-T merge(T a,T b) {return a + b;}
-
-void construct(vector<T>&tree,vector<T>&arr,T n){tree.resize(2*n);for(T i=0;i<n;i++)tree[n+i]=arr[i];for(T i=n-1;i;i--)tree[i]=merge(tree[i<<1],tree[i<<1|1]);}
-
-T query(vector<T>&tree,T l,T r,T n){T m=0;for(l+=n,r+=n;l<=r;l=(l+1)>>1,r=(r-1)>>1){if(l&1)m=merge(m,tree[l]);if(!(r&1))m=merge(m,tree[r]);}return m;}
-
-T main() {
-        int n; cin >> n;
-        vector <int> v(n, 0), tree;
-        for(int i = 0; i < n; i++) {
-                cin >> v[i];
+struct RMQ {
+        vector <int> t;
+        int n;
+        RMQ(int n) : n(n) {
+                t.resize(n << 1);
         }
-        construct(tree, v, n);
-        int q; cin >> q;
-        for(int i = 1; i <= q; i++) {
-                int l, r; cin >> l >> r;
-                cout << query(tree, l, r, n) << endl;
+        void build(int a[]) {
+                for(int i = 0; i < n; i++) t[n + i] = a[i];
+                for(int i = n - 1; i > 0; --i) t[i] = min(t[i << 1], t[i << 1 | 1]);
         }
-}
+        void modify(int p, int v) {
+                for(t[p += n] = v; p > 1; p >>= 1) t[p >> 1] = min(t[p], t[p ^ 1]);
+        }
+        int query(int l, int r) { int res = inf;
+                for(l += n, r += n; l < r; l >>= 1, r >>= 1) {
+                        if(l & 1) res = min(res, t[l++]);
+                        if(r & 1) res = min(res, t[--r]);
+                }
+                return res;
+        }
+};
