@@ -11,21 +11,17 @@ const int N = 100001;
 
 OST bit[N];
 
-void insert(int x, int y)
-{
+void insert(int x, int y) {
 	for(int i = x; i < N; i += i & -i)
 		bit[i].insert(make_pair(y, x));
 }
 
-void remove(int x, int y)
-{
+void remove(int x, int y) {
 	for(int i = x; i < N; i += i & -i)
 		bit[i].erase(make_pair(y, x));
 }
 
-int query(int x, int y)
-{
-	int ans = 0;
+int query(int x, int y) { int ans = 0;
 	for(int i = x; i > 0; i -= i & -i)
 		ans += bit[i].order_of_key(mp(y+1, 0));
 	return ans;
