@@ -12,9 +12,7 @@ struct Matrix {
         return Matrix(I);
     }
     Matrix operator * (Matrix A) {
-        int N = n;
-        int M = A.m;
-        int O = m;
+        int N = n, M = A.m, O = m;
         vector < vector <int> > Temp(N, vector <int> (M, 0));
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < M; j++) {
