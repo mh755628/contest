@@ -42,7 +42,7 @@ struct AC {
             if(tree[v].nxt[ch] != -1) {
                 tree[v].go[ch] = tree[v].nxt[ch];
             } else {
-                tree[v].go[ch] = (v == 0) ? 0 : go(get_link(tree[v].par), ch);
+                tree[v].go[ch] = (v == 0) ? 0 : go(get_link(v), ch);
             }
         }
         return tree[v].go[ch];
