@@ -6,7 +6,7 @@ struct Line {
     bool operator<(const LL &x) const { return p < x; }
 };
 
-struct LineContainer : multiset<Line, less<>> { // upper convex hull.
+struct LineContainer : multiset<Line, less<>> { // for min query add(-m, -b); -query(x);
     // (for doubles, use inf = 1/.0, div(a,b) = a/b)
     const LL inf = LLONG_MAX;
     LL div(LL a, LL b) { return a / b - ((a ^ b) < 0 && a % b); }
