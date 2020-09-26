@@ -1,48 +1,27 @@
-int mod = 1e9 + 7;
+int mod;
  
-struct Matrix {
-    int n, m;
-    vector < vector <int> > mat;
-    Matrix(vector < vector <int> > M) : mat(M), n(M.size()), m(M[0].size()) {}
-    static Matrix id(int n) {
-        vector < vector <int> > I(n, vector <int> (n, 0));
-            for(int i = 0; i < n; i++) {
-                I[i][i] = 1;
-            }
-        return Matrix(I);
-    }
-    Matrix operator * (Matrix A) {
-        int N = n, M = A.m, O = m;
-        vector < vector <int> > Temp(N, vector <int> (M, 0));
-        for(int i = 0; i < N; i++) {
-            for(int j = 0; j < M; j++) {
-                for(int k = 0; k < O; k++) {
-                    Temp[i][j] = (Temp[i][j] + mat[i][k] * A.mat[k][j]) % mod;
-                }
-            }
-        }
-        return Matrix(Temp);
-    }
-    friend ostream& operator << (ostream &out, Matrix A) ;
+struct matrix{
+	vector <vector <int> > x;
+	matrix(vector<vector <int> > m) : x(m) {}
+	matrix operator *(matrix a) {
+		int p = x.size(), q = x[0].size(), r = a.x[0].size();
+		vector <vector <int> > y = a.x, z(p, vector <int> (r, 0));
+		for(int i = 0; i < p; i++) {
+			for(int j = 0; j < q; j++) {
+				for(int k = 0; k < r; k++) {
+					z[i][j] += 1LL * x[i][k] * y[k][j] % mod;
+					z[i][j] %= mod;
+				}
+			}
+		}
+		return matrix(z);
+	}
+	matrix operator ^(int n) {
+		matrix r(vector <vector<int> > (x.size(), vector <int> (x.size(), 0))), a = *this;
+		for(int i = 0; i < x.size(); i++) r.x[i][i] = 1;
+		for(int i = n; i > 0; i >>= 1, a = a * a) if(i & 1) {
+			r = r * a;
+		}
+		return r;
+	}
 };
- 
-ostream& operator << (ostream &out, Matrix A) {
-    for(int i = 0; i < A.n; i++, cout << endl) {
-        for(int j = 0; j < A.m; j++) {
-            cout << A.mat[i][j] << " ";
-        }
-    }
-}
- 
- 
-Matrix POW(int n, Matrix M, int l) {
-    Matrix ret = M.id(l);
-    while(n) {
-        if(n & 1) {
-            ret = ret * M;
-        }
-        n /= 2;
-        M = M * M;
-    }
-    return ret;
-}
