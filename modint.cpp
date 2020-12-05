@@ -14,8 +14,10 @@ struct modint{
     friend modint operator-(modint a, modint const& b) {return a -= b;}
     friend modint operator*(modint a, modint const& b) {return a *= b;}
     friend modint operator/(modint a, modint const& b) {return a /= b;}
-    modint& operator*=(modint const& b) {x = 1LL * x * b.x % mod; return *this;}
     friend ostream& operator<<(ostream& os, modint const& a) {return os << a.x;}
+    friend bool operator!=(modint const& a, modint const& b) {return a.x ^ b.x;}
+    friend bool operator==(modint const& a, modint const& b) {return !(a != b);}
+    modint& operator*=(modint const& b) {x = 1LL * x * b.x % mod; return *this;}
     modint& operator+=(modint const& b) {x += b.x; x = (x >= mod) ? x - mod : x;return *this;}
     modint& operator-=(modint const& b) {x = x >= b.x ? x - b.x : x - b.x + mod;return *this;}
 };
