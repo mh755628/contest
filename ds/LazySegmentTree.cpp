@@ -41,6 +41,39 @@ struct LazySegmentTree {
         }
     }
 
+    void build(vector <T> &v) {
+        build(1, 1, n, v);
+    }
+
+    void build(int v, int L, int R, vector <T> &val) {
+        if(L == R) {
+            data[v] = val[L];
+            return;
+        }
+        int mid = (L + R) >> 1;
+        build(v << 1, L, mid, val);
+        build(v << 1 | 1, mid + 1, R, val);
+        data[v] = Combine(data[v << 1], data[v << 1 | 1]);
+    }
+
+    void set(int pos, T val) {
+        set(1, 1, n, pos, val);
+    }
+
+    void set(int v, int l, int r, int pos, T x) {
+        push(v, l, r);
+        if(l == r) {
+            data[v] = x;
+            return;
+        }
+        int mid = (l + r) >> 1;
+        if(pos <= mid)
+            set(v << 1, l, mid, pos, x);
+        else
+            set(v << 1 | 1, mid + 1, r, pos, x);
+        data[v] = Combine(data[v << 1], data[v << 1 | 1]);
+    }
+
     void Update(int L, int R, U x) {
         Update(1, 1, n, L, R, x);
     }
