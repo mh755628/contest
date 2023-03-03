@@ -15,3 +15,38 @@ struct Hash {
         return (h[r] - (1LL * h[l - 1] * p[r - l + 1]) % mod + mod) % mod;
     }
 };
+
+
+struct Hash{
+    const static int mod = 1e9 + 9, base = 163;
+    int val = 0, len = 0;
+ 
+    Hash(char ch = '#') {
+        val = ch;
+        len = 1;
+    }
+ 
+    static int pow(int n) {
+        static vector<int> p = {1};
+        while(p.size() <= n) {
+            p.push_back(1LL * p.back() * base % mod);
+        }
+        return p[n];
+    }
+ 
+    Hash operator + (const Hash &h) const {
+        Hash ret;
+        ret.val = (1LL * val * h.pow(h.len) + h.val) % mod;
+        ret.len = len + h.len;
+        return ret;
+    }
+ 
+    bool operator == (const Hash &h) const {
+        return val == h.val and len == h.len;
+    }
+ 
+    bool operator < (const Hash &h) const {
+        if(len != h.len) return len < h.len;
+        return val < h.val;
+    }
+};
