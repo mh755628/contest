@@ -107,3 +107,30 @@ struct LazySegmentTree {
         return Combine(Query(v << 1, l, mid, L, R), Query(v << 1 | 1, mid + 1, r, L, R));
     }
 };
+
+
+
+/**
+
+/// add value to a range
+
+LazySegmentTree <int, int> st(n, 
+    [](int a, int b) { return a + b; }, 
+    []() { return 0; }, 
+    []() { return 0; },
+    [](int a, int b, int l, int r) { return a + b * (r - l + 1); },
+    [](int a, int b) { return a + b; }
+);
+
+
+/// add and take max of a range
+
+LazySegmentTree <int, int> st(n, 
+    [](int a, int b) { return max(a, b); }, 
+    []() { return 0; }, 
+    []() { return 0; },
+    [](int a, int b, int l, int r) { return a + b; },
+    [](int a, int b) { return a + b; }
+);
+
+**/

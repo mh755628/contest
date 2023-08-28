@@ -1,52 +1,56 @@
+template <typename T, typename U, T mod, T base>
 struct Hash {
-    int len, base; long long mod; vector <int> p, h;
-    Hash(int len, int base, int mod) : len(len), base(base), mod(mod) {
-        p.resize(len + 1, 0); h.resize(len + 1, 0); p[0] = 1;
-        for(int i = 1; i <= len; i++) {
-            p[i] = (1LL * p[i - 1] * base) % mod;
-        }
+    T val = 0, len = 0;
+    Hash(T val = 0, int len = 0) {
+        this->val = val;
+        this->len = len;
     }
-    void init(string &str){
-        for(int i = 1; i <= len; i++) {
-            h[i] = (1LL * h[i - 1] * base + (int)str[i - 1]) % mod;
-        }
+    static T pwr(T m) {
+        static vector <T> p = {1};
+        while(p.size() <= m) p.push_back((U)p.back() * base % mod);
+        return p[m];
     }
-    int substr(int l, int r) {
-        return (h[r] - (1LL * h[l - 1] * p[r - l + 1]) % mod + mod) % mod;
-    }
-};
-
-
-struct Hash{
-    const static int mod = 1e9 + 9, base = 163;
-    int val = 0, len = 0;
- 
-    Hash(char ch = '#') {
-        val = ch;
-        len = 1;
-    }
- 
-    static int pow(int n) {
-        static vector<int> p = {1};
-        while(p.size() <= n) {
-            p.push_back(1LL * p.back() * base % mod);
-        }
-        return p[n];
-    }
- 
     Hash operator + (const Hash &h) const {
-        Hash ret;
-        ret.val = (1LL * val * h.pow(h.len) + h.val) % mod;
-        ret.len = len + h.len;
-        return ret;
+        return Hash(((U)val * pwr(h.len) + h.val) % mod, len + h.len);
     }
- 
+    Hash operator - (const Hash &h) const {
+        return Hash((val - (U)h.val * pwr(len - h.len) % mod + mod) % mod, len - h.len);
+    }
     bool operator == (const Hash &h) const {
         return val == h.val and len == h.len;
     }
- 
-    bool operator < (const Hash &h) const {
-        if(len != h.len) return len < h.len;
-        return val < h.val;
+    friend ostream &operator << (ostream &os, const Hash &h) {
+        return os << "[" << h.val << ", " << h.len << "]";
+    }
+};
+
+using h = Hash <int, long long, (int)(1e9 + 9), 163>;
+
+
+struct String {
+    vector <h> hsh;
+    String(string str = "") {
+        int n = str.size();
+        hsh.resize(n + 1);
+        for(int i = 0; i < n; i++) {
+            hsh[i + 1] = hsh[i] + h(str[i], 1);
+        }
+    }
+    h substr(int l, int r) {
+        return hsh[r] - hsh[l - 1];
+    }
+};
+
+struct Pallindrome {
+    String F, B;
+    int len;
+    Pallindrome(string str = "") {
+        len = str.size();
+        F = String(str);
+        reverse(str.begin(), str.end());
+        B = String(str);
+    }
+    pair <h, h> substr(int l, int r) {
+        return {F.substr(l, r), B.substr(len - r + 1, len - l + 1)};
     }
 };
