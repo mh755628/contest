@@ -1,7 +1,8 @@
+
 struct Tree {
-    vector <vector <int>> adj;
+    vector <vector <int>> adj, anc;
     vector <int> st, en, lvl, sz, par;
-    int ptr = 0;
+    int ptr = 0, k = 0;
 
     Tree(int n) : adj(n + 1) {
         st = en = lvl = sz = par = vector <int> (n + 1, 0);
@@ -27,26 +28,20 @@ struct Tree {
         
         en[v] = ++ptr;
     }
-};
 
-struct Lca {
-    vector <vector <int>> ancestor;
-    vector <int> lvl;
-    int k = 0;
-
-    Lca(Tree &tree) : lvl(tree.lvl) {
-        int n = tree.adj.size() - 1;
+    void init_lca() {
+        int n = adj.size() - 1;
         while((1 << k) <= n) 
             k++;
-        ancestor = vector <vector <int>> (k, vector <int> (n + 1, 0));
+        anc = vector <vector <int>> (k, vector <int> (n + 1, 0));
 
         for(int i = 1; i <= n; i++) { 
-            ancestor[0][i] = tree.par[i];
+            anc[0][i] = par[i];
         }
         
         for(int i = 1; i < k; i++) {
             for(int j = 1; j <= n; j++) {
-                ancestor[i][j] = ancestor[i - 1][ancestor[i - 1][j]];
+                anc[i][j] = anc[i - 1][anc[i - 1][j]];
             }
         }
     }
@@ -54,7 +49,7 @@ struct Lca {
     int lift(int v, int dis) {
         for(int i = k - 1; i >= 0; i--) {
             if(lvl[v] - (1 << i) >= dis) {
-                v = ancestor[i][v];
+                v = anc[i][v];
             }
         }
         return v;
@@ -64,16 +59,16 @@ struct Lca {
         if(lvl[u] > lvl[v]) 
             swap(u, v);
         
-        int k = ancestor.size();
+        int k = anc.size();
         v = lift(v, lvl[u]);
 
         for(int i = k - 1; i >= 0; i--) {
-            if(ancestor[i][v] ^ ancestor[i][u]) {
-                u = ancestor[i][u];
-                v = ancestor[i][v];
+            if(anc[i][v] ^ anc[i][u]) {
+                u = anc[i][u];
+                v = anc[i][v];
             }
         }
-        return u == v ? v : ancestor[0][v];
+        return u == v ? v : anc[0][v];
     }
 };
 

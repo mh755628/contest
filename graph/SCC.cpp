@@ -2,7 +2,14 @@ struct SCC{
     int n, componentCount = 0;
     vector <vector <int>> adjacencyList, reverseAdjacencyList;
     vector <int> isVisited, componentId;
+    int n, componentCount = 0;
+    vector <vector <int>> adjacencyList, reverseAdjacencyList;
+    vector <int> isVisited, componentId;
     stack <int> stk;
+ 
+    SCC(int n) : n(n) {
+        adjacencyList = reverseAdjacencyList = vector <vector <int>> (n + 1);
+        isVisited = componentId = vector <int> (n + 1, 0);
  
     SCC(int n) : n(n) {
         adjacencyList = reverseAdjacencyList = vector <vector <int>> (n + 1);
@@ -12,9 +19,16 @@ struct SCC{
     void addEdge(int u, int v) {
         adjacencyList[u].push_back(v);
         reverseAdjacencyList[v].push_back(u);
+ 
+    void addEdge(int u, int v) {
+        adjacencyList[u].push_back(v);
+        reverseAdjacencyList[v].push_back(u);
     }
  
+ 
     void dfs(int u) { 
+        isVisited[u] = true;
+        for(int v: adjacencyList[u]) if(!isVisited[v]) {
         isVisited[u] = true;
         for(int v: adjacencyList[u]) if(!isVisited[v]) {
             dfs(v);
@@ -22,12 +36,23 @@ struct SCC{
         stk.push(u);
     }
  
+ 
     void dfs(int u, int id) {
+        isVisited[u] = false; 
+        componentId[u] = id;
+        for(int v: reverseAdjacencyList[u]) if(isVisited[v]) {
         isVisited[u] = false; 
         componentId[u] = id;
         for(int v: reverseAdjacencyList[u]) if(isVisited[v]) {
             dfs(v, id);
         }
+    } 
+ 
+    int init() {
+        for(int i = 1; i <= n; i++) { 
+            if(!isVisited[i]) {
+                dfs(i);
+            }
     } 
  
     int init() {
@@ -41,8 +66,14 @@ struct SCC{
             stk.pop(); 
             if(isVisited[v]) {
                 dfs(v, ++componentCount);
+        while(not stk.empty()) {
+            int v = stk.top(); 
+            stk.pop(); 
+            if(isVisited[v]) {
+                dfs(v, ++componentCount);
             }
         } 
+        return componentCount;
         return componentCount;
     }
 
