@@ -1,3 +1,69 @@
+/////////////////////////////////
+///////// with lca /////////////
+////////////////////////////////
+
+
+struct Tree {
+    vector <vector <int>> adj, anc;
+    vector <int> st, en, lvl, sz, par;
+    int ptr = 0, k = 0;
+
+    Tree(int n) : adj(n + 1) {
+        st = en = lvl = sz = par = vector <int> (n + 1, 0);
+        k = 32 - __builtin_clz(n);
+        anc = vector <vector <int>> (k, vector <int> (n + 1, 0));
+    }
+
+    void add_edge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    void dfs(int v, int p) {
+        par[v] = p;
+        sz[v] = 1;
+        st[v] = ++ptr;
+        lvl[v] = lvl[p] + 1;
+        anc[0][v] = p;
+        
+        for(int i = 1; i < k; i++) {
+            anc[i][v] = anc[i - 1][anc[i - 1][v]];
+        }
+        for(int u: adj[v]) {
+            if(p ^ u) {
+                dfs(u, v);
+                sz[v] += sz[u];
+            }
+        }
+        en[v] = ptr;
+    }
+
+    int lift(int v, int dis) {
+        for(int i = k - 1; i >= 0; i--) {
+            if(lvl[v] - (1 << i) >= dis) {
+                v = anc[i][v];
+            }
+        }
+        return v;
+    }
+
+    int lca(int u, int v) {
+        if(lvl[u] > lvl[v]) 
+            swap(u, v);
+        
+        int k = anc.size();
+        v = lift(v, lvl[u]);
+
+        for(int i = k - 1; i >= 0; i--) {
+            if(anc[i][v] ^ anc[i][u]) {
+                u = anc[i][u];
+                v = anc[i][v];
+            }
+        }
+        return u == v ? v : anc[0][v];
+    }
+};
+
 
 struct Tree {
     vector <vector <int>> adj, anc;
@@ -71,6 +137,7 @@ struct Tree {
         return u == v ? v : anc[0][v];
     }
 };
+
 
 struct HeavyLightDecomposition {
     vector <int> head, pos, lvl, par;
