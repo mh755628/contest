@@ -78,6 +78,24 @@ struct Tree {
         }
         return u == v ? v : anc[0][v];
     }
+
+    void print_tree(int v, int p, string prefix = "", bool isLast = true) {
+        cerr << prefix;
+        cerr << (isLast ? "└── " : "├── ");
+        cerr << v << endl;
+        // cerr << v << " (tin=" << tin[v] << ", tout=" << tout[v] << ", sz=" << sz[v] << ")\n";
+
+        vector<int> children;
+        for (int u : adj[v]) {
+            if (u != p) children.push_back(u);
+        }
+
+        for (int i = 0; i < (int)children.size(); i++) {
+            int u = children[i];
+            bool last = (i + 1 == (int)children.size());
+            print_tree(u, v, prefix + (isLast ? "    " : "│   "), last);
+        }
+    }
  
 };
  
